@@ -1,0 +1,11 @@
+.dea
+*.sqlite3
+mvenv
+myvenv
+*.pyc
+.env
+.vscode
+venv/*
+.idea/*
+__pycache__/
+staticfiles
