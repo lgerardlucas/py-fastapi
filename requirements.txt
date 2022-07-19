@@ -1,4 +1,6 @@
 python-decouple
+python-dotenv
 psycopg2-binary
-uvicorn
+uvicorn[standard]
 fastapi
+gunicorn

@@ -18,6 +18,6 @@ WORKDIR /src
 COPY . /src
 RUN pip install -r /src/requirements.txt
 
-EXPOSE 8001:8001
+EXPOSE 8000:8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["gunicorn", "-c", "gunicorn.py", "app.main:app"]
