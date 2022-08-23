@@ -1,5 +1,8 @@
 import os
 
+# Debug 
+debug=False
+
 # Diretório do sistema
 chdir='{}'.format(os.path.dirname(os.path.dirname(os.path.abspath('__file__'))))
 
@@ -15,4 +18,4 @@ keepalive=60
 
 worker_connections=1000
 
-pidfile='{}{}'.format(chdir,'gunicorn.pi')
+pidfile='{}{}'.format(chdir,'gunicorn.pid')

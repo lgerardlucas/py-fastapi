@@ -13,3 +13,5 @@ docker rm $(docker ps -a -q)
 Apagar images em lote
 docker rmi $(docker images -a -q)
 
+Acessar o container quando ele é o único ativo 
+docker exec -it $(docker ps -q) /bin/bash

@@ -9,21 +9,23 @@ from psycopg2.extras import RealDictCursor
 class DBConnect(object):
    db=None
    def __init__(self):
-       host = config('HOST')
-       db = config('DB')
-       usr = config('ROLE')
-       pwd = config('PASSWORD')
-       self._db = psycopg2.connect(host=host, database=db, user=usr,  password=pwd)
-   
+        print('Preparando conexão, aguarde...')
+        host = config('HOST')
+        db = config('DB')
+        usr = config('ROLE')
+        pwd = config('PASSWORD')
+        self._db = psycopg2.connect(host=host, database=db, user=usr,  password=pwd)
+        print('Conexão estabelicida com sucesso"')
+
    def manipulate(self, sql):
-       try:
-           cur=self._db.cursor(cursor_factory=RealDictCursor)
-           cur.execute(sql)
-           cur.close();
-           self._db.commit()
-       except:
-          return False;
-       return True;
+        try:
+            cur=self._db.cursor(cursor_factory=RealDictCursor)
+            cur.execute(sql)
+            cur.close();
+            self._db.commit()
+        except:
+            return False;
+        return True;
    
    def query(self, sql):
        rs=None
@@ -44,6 +46,6 @@ class DBConnect(object):
    def close(self):
        self._db.close()
 
-cur = DBConnect()
-cliente = cur.query('select * from cliente')
-print(cliente[0])
+#cur = DBConnect()
+#cliente = cur.query('select * from cliente')
+#print(cliente[0])

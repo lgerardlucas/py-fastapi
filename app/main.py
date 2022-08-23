@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 
-app = FastAPI(title="FastAPI, Docker, and Traefik")
+app = FastAPI(title="MAP-e - FastAPI")
+
+from app.db.db import DBConnect
 
 @app.get("/")
-def read_root():
-    return {"hello": "world"}
+async def get_all():
+    cur = DBConnect()
+    cliente = cur.query('select * from cliente')
+    return cliente[10]

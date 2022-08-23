@@ -12,7 +12,7 @@ RUN apt-get update \
 ENV LC_ALL pt_BR.UTF8
 ENV LANG pt_BR.UTF8
 ENV LANGUAGE pt_BR.UTF8
-ENV HOST localhost
+ENV HOST 192.168.0.106
 ENV DB pgmape
 ENV ROLE postgres
 ENV PASSWORD postgres
