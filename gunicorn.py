@@ -1,21 +1,25 @@
 import os
+from dotenv import load_dotenv
 
-# Debug 
-debug=False
+# Carregando arquivo .ini
+load_dotenv() 
 
 # Diretório do sistema
 chdir='{}'.format(os.path.dirname(os.path.dirname(os.path.abspath('__file__'))))
 
+# Debug 
+debug=os.getenv('DEBUG')
+
 # IP e Porta 
-bind='0.0.0.0:8000'
+bind=os.getenv('BIND')
 
 # Nº de processos por CPU
-workers=4
+workers=os.getenv('WORKERS')
 
 worker_class='uvicorn.workers.UvicornWorker'
 
-keepalive=60
+keepalive=os.getenv('KEEPALIVE')
 
-worker_connections=1000
+worker_connections=os.getenv('WORKER_CONNECTIONS')
 
-pidfile='{}{}'.format(chdir,'gunicorn.pid')
+pidfile=os.path.join(chdir, 'py-fastapi', 'gunicorn.pid')

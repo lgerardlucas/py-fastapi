@@ -5,7 +5,18 @@ app = FastAPI(title="MAP-e - FastAPI")
 from app.db.db import DBConnect
 
 @app.get("/")
-async def get_all():
+async def get_paroquias():
     cur = DBConnect()
-    cliente = cur.query('select * from cliente')
-    return cliente[10]
+    paroquias = cur.query('select * from paroquia')
+    return paroquias
+
+
+if __name__ == '__main__':
+    import uvicorn
+    import os
+    from dotenv import load_dotenv
+
+    load_dotenv() 
+
+    uvicorn.run("main:app", log_level="info", 
+        debug=os.getenv('DEBUG'), reload=os.getenv('RELOAD'))
