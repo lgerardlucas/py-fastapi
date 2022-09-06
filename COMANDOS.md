@@ -15,3 +15,6 @@ docker rmi $(docker images -a -q)
 
 Acessar o container quando ele é o único ativo 
 docker exec -it $(docker ps -q) /bin/bash
+
+Rodar o sistema
+gunicorn -c gunicorn.py app.main:app

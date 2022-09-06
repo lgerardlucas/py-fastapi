@@ -3,6 +3,7 @@ Mòdulo para conexão ao banco de dados
 
 '''
 import psycopg2
+from psycopg2 import OperationalError
 from decouple import config
 from psycopg2.extras import RealDictCursor
 
@@ -34,7 +35,8 @@ class DBConnect(object):
            cur.execute(sql)
            rs=cur.fetchall();
        except:
-           return None
+           return {"detail": "Erro ao executar a consulta!", 
+                   "SQL": sql}
        return [dict(row) for row in rs]
 
    def nextPK(self, tabela, chave):
