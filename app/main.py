@@ -1,59 +1,109 @@
+from typing import Any
 from email.policy import HTTP
-from typing import AnyStr
 from app.db.db import DBConnect
 from http.client import HTTPException
 from fastapi import (
-    FastAPI, HTTPException, status
+    FastAPI, HTTPException, status, Response, Path, Depends
 )
 from app.paroquia.model import Paroquia
 
-app = FastAPI(title="Igreja - Dízimo")
-
-@app.get("/paroquias")
-async def get_paroquias():
+def conect_db():
+    cur = DBConnect()
     try:
-        cur = DBConnect()
-        paroquias = cur.query('select * from paroquia')
+        yield cur
+    finally:
+        cur.close()
+    
+
+app = FastAPI(
+    title="Igreja - Dízimo",
+    version='0.0.1',
+    description="Sistema de Dízimo - Paroquiano"
+    )
+
+@app.get("/paroquias", 
+         description="Lista de todas as Paróquias ativas", 
+         summary="Lista de Paróquias",
+         response_model=Paroquia
+         )
+async def get_paroquias(db: Any = Depends(conect_db)):
+    paroquias = db.query('select * from paroquia')
+
+    if len(paroquias) != 0:
         return paroquias
-    except KeyError:
-        breakpoint()
+    else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail='Registro não encontrado!'
-        )
+            detail='Registro não encontrado!')
 
 
-@app.get("/paroquia/{id}")
-async def get_paroquia(id: int):
-    try:
-        cur = DBConnect()
-        paroquia = cur.query('{}{}'.format(
-            'select * from paroquia where id = ', id))
+@app.get("/paroquia/{id}", 
+         description="Retorna Paróquia pesquisada", 
+         summary="Retorna Paróquia",
+         response_model=Paroquia
+         )
+async def get_paroquia(id: int = Path(default=None, title="ID da Paróquina", description="Informe o ID da Paróquia"), db: Any = Depends(conect_db)):
+    paroquia = db.query('{}{}'.format(
+        'select * from paroquia where id = ', id))
+    
+    if len(paroquia) != 0:
         return paroquia
-    except KeyError:
+    else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail='Registro não encontrado!'
+            detail='Registro não encontrado!')
+
+
+@app.post("/paroquia", 
+        status_code=status.HTTP_201_CREATED, 
+        description="Salva a nova Paróquia", 
+        summary="Salvar Paróquia",
+        response_model=Paroquia
         )
-
-
-@app.post("/paroquia", status_code=status.HTTP_201_CREATED)
-async def post_paroquia(paroquia: Paroquia):
+async def post_paroquia(paroquia: Paroquia, db: Any = Depends(conect_db)):
     if paroquia:
-        cur = DBConnect()
-        cur.manipulate("Insert Into paroquia(name, street, district, city) Values('{}','{}','{}','{}')".format(
+        ret = db.manipulate("Insert Into paroquia(name, street, district, city) Values('{}','{}','{}','{}')".format(
             paroquia.name, paroquia.street, paroquia.district, paroquia.city))
-    return paroquia
+    
+    if ret:
+        return paroquia
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_412_PRECONDITION_FAILED,
+            detail='Registro não incluído!')
 
 
-@app.put("/paroquia/{id}")
-async def put_paroquia(id: int, paroquia: Paroquia):
+@app.put("/paroquia/{id}", 
+         description="Atualiza campos da tabela de Paróquias", 
+         summary="Atualiza Paróquia",
+         response_model=Paroquia
+         )
+async def put_paroquia(id: int, paroquia: Paroquia, db: Any = Depends(conect_db)):
     if paroquia and id:
-        cur = DBConnect()
-        cur.manipulate("Update paroquia Set name='{}', street='{}', district='{}', city='{}' Where id={}".format(
+        ret = db.manipulate("Update paroquia Set name='{}', street='{}', district='{}', city='{}' Where id={}".format(
             paroquia.name, paroquia.street, paroquia.district, paroquia.city, id))
-    return paroquia
+    if ret:
+        return paroquia
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_412_PRECONDITION_FAILED,
+            detail='Registro não incluído!')
 
+@app.delete("/paroquia/{id}", 
+            status_code=status.HTTP_200_OK,
+            response_model=Paroquia
+            )
+async def del_paroquia(id: int = Path(default=None, title="ID da Paróquina", description="Informe o ID da Paróquia"), db: Any = Depends(conect_db)):    
+    paroquia = db.query('{}{}'.format(
+        'select * from paroquia where id = ', id))
+    if len(paroquia) != 0:
+        db.manipulate('{}{}'.format(
+            'Delete from paroquia where id = ', id))
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Registro não encontrado!')
 
 if __name__ == '__main__':
     import uvicorn
