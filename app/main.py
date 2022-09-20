@@ -8,7 +8,7 @@ app = FastAPI(
     description="Sistema de Dízimo - Paróquia"
     )
 
-app.include_router(router, tags=['paroquias'])
+app.include_router(router, tags=['API - Paróquias'])
 
 if __name__ == '__main__':
     import uvicorn

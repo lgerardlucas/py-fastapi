@@ -1,3 +1,4 @@
+from multiprocessing.connection import wait
 from typing import Any, List
 from http.client import HTTPException
 from app.db.db import DBConnect
@@ -5,9 +6,10 @@ from fastapi import (
     APIRouter, HTTPException, status, Response, Path, Depends
 )
 from app.paroquia.model import Paroquia
+from starlette.requests import Request
 
 router = APIRouter()
-
+ 
 def conect_db():
     cur = DBConnect()
     try:
