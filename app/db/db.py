@@ -22,18 +22,18 @@ class DBConnect(object):
         try:
             cur=self._db.cursor(cursor_factory=RealDictCursor)
             cur.execute(sql)
-            cur.close();
+            cur.close()
             self._db.commit()
         except:
-            return False;
-        return True;
+            return False
+        return True
    
    def query(self, sql):
        rs=None
        try:
            cur=self._db.cursor(cursor_factory=RealDictCursor)
            cur.execute(sql)
-           rs=cur.fetchall();
+           rs=cur.fetchall()
        except:
            return {"detail": "Erro ao executar a consulta!", 
                    "SQL": sql}

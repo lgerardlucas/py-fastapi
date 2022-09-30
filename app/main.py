@@ -1,6 +1,8 @@
+'''
+MAIN - Sistema FastAPI
+'''
 from fastapi import FastAPI
-
-from app.paroquia.router import router
+from .paroquia.router import router as router_paroquia
 
 app = FastAPI(
     title="Igreja - Dízimo",
@@ -8,7 +10,8 @@ app = FastAPI(
     description="Sistema de Dízimo - Paróquia"
     )
 
-app.include_router(router, tags=['API - Paróquias'])
+
+app.include_router(router_paroquia, tags=['API - Paróquias'])
 
 if __name__ == '__main__':
     import uvicorn
