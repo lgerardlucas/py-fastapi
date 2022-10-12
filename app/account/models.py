@@ -9,11 +9,11 @@ class Account(BaseModel):
     '''
     Class - Model Account
     '''
-    id: Optional[int]
+    #id: Optional[int]
     username: Union[str, None] = None
     email: Union[str, None] = None
     password: Union[str, None] = None
-    hashed_password: Union[str, None] = None
+    #hashed_password: Optional[str]
 
 
     class Config:

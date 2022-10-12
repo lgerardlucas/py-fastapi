@@ -3,21 +3,30 @@ destionation file to query data base
 '''
 
 
+from email.policy import default
+from typing import Any
+
+
 class SQLQuery():
     '''
     Class to manipulate database register - CRUD
     '''
-    def __init__(self, id_num: int = 0, table_name: str = None) -> None:
-        self.id_num = id_num
+    def __init__(self, 
+            value: Any,
+            table_name: str = None,
+            field_name: str = None
+        ) -> None:
+        self.value = value
         self.table_name = table_name
+        self.field_name = field_name if field_name else 'id'
 
     def query_search(self) -> str:
         '''
         Function - Record list from database
         '''
-        where: str = f'Where id = {self.id_num}' if self.id_num > 0 else ''
+        where: str = f"Where {self.field_name} = '{self.value}'" if self.value else ''
 
-        sql: str = f'''Select * From {self.table_name} {where} Order by id'''
+        sql: str = f'''Select * From {self.table_name} {where} Order by {self.field_name}'''
 
         return sql
 
@@ -44,7 +53,7 @@ class SQLQuery():
             update_fields += ',' if i+1 < len(kwargs.keys()) else ''
 
         sql = f'''Update {self.table_name} Set {update_fields}
-            Where id = {self.id_num}
+            Where id = {self.value}
             '''
 
         return sql    
@@ -54,7 +63,7 @@ class SQLQuery():
         Function - Delete one register in database
         '''
         sql = f'''Delete From {self.table_name}
-            where id = {self.id_num}
+            where id = {self.value}
             '''
 
         return sql

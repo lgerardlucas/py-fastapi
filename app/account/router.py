@@ -6,8 +6,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from ..account.models import Account
 from ..db.db import DBConnect
 from ..db.querys import SQLQuery
-from ..security import criar_token_jwt, verify_password
-
+from ..security import criar_token_jwt, verify_password, get_password_hash
 
 router = APIRouter()
 
@@ -50,7 +49,7 @@ async def get_accounts(data_base: Any = Depends(conect_db)):
              response_model=Account,
              response_description='Usuário gravado com sucesso!'
              )
-async def post_paroquia(account: Account, data_base: Any = Depends(conect_db)):
+async def post_account(account: Account, data_base: Any = Depends(conect_db)):
     '''
     POST - Save register new in database
     '''
@@ -59,7 +58,8 @@ async def post_paroquia(account: Account, data_base: Any = Depends(conect_db)):
         ret: bool = data_base.manipulate(query.insert(
             username=account.username,
             email=account.email,
-            password=account.password)
+            password=account.password,
+            hashed_password=get_password_hash(account.password))
         )
 
     if ret:
@@ -73,14 +73,14 @@ async def post_paroquia(account: Account, data_base: Any = Depends(conect_db)):
 async def login(username: str, password: str,
                 data_base: Any = Depends(conect_db)):
     '''
-    Function - teste do teste
+    Function - Valida o login e retorna o token
     '''
-    query: SQLQuery = SQLQuery(1, 'account')
+    query: SQLQuery = SQLQuery(username, 'account', 'email')
     user: Account = data_base.query(query.query_search())
 
     if not user or not verify_password(password, user[0]['hashed_password']):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail=f"Email {username} ou nome de usuário incorretos"
+                            detail=f"Email {username} do usuário está incorreto!"
                            )
     return {
         "access_token": criar_token_jwt(user[0]['email']),
