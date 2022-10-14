@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from ..account.models import Account
 from ..db.db import DBConnect
 from ..db.querys import SQLQuery
-from ..security import criar_token_jwt, verify_password, get_password_hash
+from ..security import criar_token_jwt, get_current_user, verify_password, get_password_hash
 
 router = APIRouter()
 
@@ -28,7 +28,8 @@ def conect_db():
             response_model=List[Account],
             response_description='Lista de usuários retornadas com sucesso!'
             )
-async def get_accounts(data_base: Any = Depends(conect_db)):
+async def get_accounts(data_base: Any = Depends(conect_db),
+        get_user_loged: Account = Depends(get_current_user)):
     '''
     GET - Record list from database
     '''
@@ -49,20 +50,22 @@ async def get_accounts(data_base: Any = Depends(conect_db)):
              response_model=Account,
              response_description='Usuário gravado com sucesso!'
              )
-async def post_account(account: Account, data_base: Any = Depends(conect_db)):
+async def post_account(account: Account, 
+        data_base: Any = Depends(conect_db),
+        get_user_loged: Account = Depends(get_current_user)):
     '''
     POST - Save register new in database
     '''
     if account:
         query: SQLQuery = SQLQuery(0, 'account')
-        ret: bool = data_base.manipulate(query.insert(
+        query_result: bool = data_base.manipulate(query.insert(
             username=account.username,
             email=account.email,
             password=account.password,
             hashed_password=get_password_hash(account.password))
         )
 
-    if ret:
+    if query_result:
         return account
     else:
         raise HTTPException(
@@ -71,18 +74,22 @@ async def post_account(account: Account, data_base: Any = Depends(conect_db)):
 
 @router.get("/api/v1/login")
 async def login(username: str, password: str,
-                data_base: Any = Depends(conect_db)):
+        data_base: Any = Depends(conect_db)):
     '''
     Function - Valida o login e retorna o token
     '''
     query: SQLQuery = SQLQuery(username, 'account', 'email')
-    user: Account = data_base.query(query.query_search())
+    query_result: Account = data_base.query(query.query_search())
 
-    if not user or not verify_password(password, user[0]['hashed_password']):
+    if not query_result:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail=f"Email {username} não cadastrado!"
+        )
+    if not verify_password(password, query_result[0]['hashed_password']):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail=f"Email {username} do usuário está incorreto!"
-                           )
+        )
     return {
-        "access_token": criar_token_jwt(user[0]['email']),
+        "access_token": criar_token_jwt(query_result[0]['email']),
         "token_type": "bearer",
     }

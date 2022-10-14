@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from ..paroquia.models import Paroquia
 from ..db.db import DBConnect
 from ..db.querys import SQLQuery
+from ..security import get_current_user
 
 
 router = APIRouter()
@@ -30,7 +31,8 @@ def conect_db():
             response_model=List[Paroquia],
             response_description='Lista de Paróquias retornadas com sucesso!'
             )
-async def get_paroquias(data_base: Any = Depends(conect_db)):
+async def get_paroquias(data_base: Any = Depends(conect_db),
+        get_user_loged: Any = Depends(get_current_user)):
     '''
     GET - Record list from database
     '''
@@ -52,9 +54,10 @@ async def get_paroquias(data_base: Any = Depends(conect_db)):
             response_description='Paróquia retornada com sucesso!'
             )
 async def get_paroquia(id_num: int = Path(default=None,
-            title="ID da Paróquina",
-            description="Informe o ID da Paróquia"),
-            dat_base: Any = Depends(conect_db)):
+        title="ID da Paróquina",
+        description="Informe o ID da Paróquia"),
+        dat_base: Any = Depends(conect_db),
+        get_user_loged: Any = Depends(get_current_user)):
     '''
     GET - Return one register from database
     '''
@@ -76,7 +79,9 @@ async def get_paroquia(id_num: int = Path(default=None,
              response_model=Paroquia,
              response_description='Paróquia gravada com sucesso!'
              )
-async def post_paroquia(paroquia: Paroquia, data_base: Any = Depends(conect_db)):
+async def post_paroquia(paroquia: Paroquia, 
+        data_base: Any = Depends(conect_db),
+        get_user_loged: Any = Depends(get_current_user)):
     '''
     POST - Save register new in database
     '''
@@ -105,7 +110,8 @@ async def post_paroquia(paroquia: Paroquia, data_base: Any = Depends(conect_db))
             )
 async def put_paroquia(id_num: int, 
         paroquia: Paroquia, 
-        data_base: Any = Depends(conect_db)):
+        data_base: Any = Depends(conect_db),
+        get_user_loged: Any = Depends(get_current_user)):
     '''
     PUT - Update one register in dababase
     '''
@@ -139,7 +145,8 @@ async def put_paroquia(id_num: int,
 async def del_paroquia(id_num: int = Path(default=None, 
         title="ID da Paróquina",
         description="Informe o ID da Paróquia"),
-        data_base: Any = Depends(conect_db)):
+        data_base: Any = Depends(conect_db),
+        get_user_loged: Any = Depends(get_current_user)):
     '''
     DELETE - Delete one register in database
     '''
