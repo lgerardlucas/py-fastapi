@@ -6,7 +6,8 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from ..account.models import Account
 from ..db.db import DBConnect
 from ..db.querys import SQLQuery
-from ..security import criar_token_jwt, get_current_user, verify_password, get_password_hash
+from ..security import criar_token_jwt, verify_password, get_password_hash, get_current_user
+
 
 router = APIRouter()
 
@@ -51,12 +52,19 @@ async def get_accounts(data_base: Any = Depends(conect_db),
              response_description='Usuário gravado com sucesso!'
              )
 async def post_account(account: Account, 
-        data_base: Any = Depends(conect_db),
-        get_user_loged: Account = Depends(get_current_user)):
+        data_base: Any = Depends(conect_db)):
     '''
-    POST - Save register new in database
+    POST - Add user new
     '''
     if account:
+        query: SQLQuery = SQLQuery(account.email, 'account', 'email')
+        query_result: Account = data_base.query(query.query_search())
+
+        if len(query_result) > 0:
+            raise HTTPException(
+            status_code=status.HTTP_412_PRECONDITION_FAILED,
+            detail='Registro já existente na base de dados!')
+
         query: SQLQuery = SQLQuery(0, 'account')
         query_result: bool = data_base.manipulate(query.insert(
             username=account.username,
@@ -76,7 +84,7 @@ async def post_account(account: Account,
 async def login(username: str, password: str,
         data_base: Any = Depends(conect_db)):
     '''
-    Function - Valida o login e retorna o token
+    GET - Valida o login e retorna o token
     '''
     query: SQLQuery = SQLQuery(username, 'account', 'email')
     query_result: Account = data_base.query(query.query_search())

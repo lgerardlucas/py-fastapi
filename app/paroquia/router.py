@@ -12,6 +12,7 @@ from ..security import get_current_user
 
 router = APIRouter()
 
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def conect_db():
@@ -124,18 +125,21 @@ async def put_paroquia(id_num: int,
             detail='Registro não localizado para atualização!')
 
     if paroquia and paroquia_update and id:
-        ret = data_base.manipulate(query.update(name=paroquia.name,
-            street=paroquia.street,
-            district=paroquia.district,
-            city=paroquia.city)
-        )
-
-    if ret:
-        return paroquia
+        if paroquia.name:
+            ret = data_base.manipulate(query.update(name=paroquia.name))
+        if paroquia.street:
+            ret = data_base.manipulate(query.update(street=paroquia.street))
+        if paroquia.district:
+            ret = data_base.manipulate(query.update(district=paroquia.district))
+        if paroquia.city:
+            ret = data_base.manipulate(query.update(city=paroquia.city))
     else:
         raise HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
-            detail='Registro não incluído!')
+            detail='Registro não atualizado!')
+
+    if ret:
+        return paroquia
 
 
 @router.delete("/api/v1/paroquia/{id_num}",

@@ -1,20 +1,17 @@
 '''
 MODELS - Class model to ACCOUNT
 '''
-from typing import Union, Optional
-from pydantic import BaseModel
+from typing import Union
+from pydantic import BaseModel, EmailStr
 
 
 class Account(BaseModel):
     '''
     Class - Model Account
     '''
-    #id: Optional[int]
     username: Union[str, None] = None
-    email: Union[str, None] = None
+    email: Union[EmailStr, None] = None
     password: Union[str, None] = None
-    #hashed_password: Optional[str]
-
 
     class Config:
         '''

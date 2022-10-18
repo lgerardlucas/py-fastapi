@@ -56,7 +56,7 @@ class SQLQuery():
             Where id = {self.value}
             '''
 
-        return sql    
+        return sql
 
     def delete(self) -> str:
         '''
