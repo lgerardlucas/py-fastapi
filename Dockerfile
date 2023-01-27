@@ -35,5 +35,5 @@ USER user
 
 EXPOSE 8000:8000
 
-CMD ["/app/myvenv/bin/gunicorn", "-c", "gunicorn.py", "-k", "uvicorn.workers.UvicornWorker", "app.main:app"]
-#CMD ["/app/myvenv/bin/gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "3", "-b", "0.0.0.0:8000", "app.main:app"]
+#CMD ["/app/myvenv/bin/gunicorn", "-c", "gunicorn.py", "-k", "uvicorn.workers.UvicornWorker", "app.main:app"]
+CMD ["/app/myvenv/bin/gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "3", "-b", "0.0.0.0:8000", "app.main:app"]

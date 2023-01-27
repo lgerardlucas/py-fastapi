@@ -18,3 +18,6 @@ docker exec -it $(docker ps -q) /bin/bash
 
 Rodar o sistema
 gunicorn -c gunicorn.py app.main:app
+
+Documentação
+http://127.0.0.1:8000/docs

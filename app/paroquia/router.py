@@ -3,7 +3,6 @@ Module - Router -> PARÓQUIA
 """
 from typing import Any, List
 from fastapi import APIRouter, HTTPException, status, Path, Depends
-from fastapi.security import OAuth2PasswordBearer
 from ..paroquia.models import Paroquia
 from ..db.db import DBConnect
 from ..db.querys import SQLQuery
@@ -12,8 +11,6 @@ from ..security import get_current_user
 
 router = APIRouter()
 
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def conect_db():
     '''

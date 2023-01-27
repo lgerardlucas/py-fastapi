@@ -8,9 +8,7 @@ from ..db.db import DBConnect
 from ..db.querys import SQLQuery
 from ..security import criar_token_jwt, verify_password, get_password_hash, get_current_user
 
-
 router = APIRouter()
-
 
 def conect_db():
     '''
@@ -43,6 +41,7 @@ async def get_accounts(data_base: Any = Depends(conect_db),
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Registro não encontrado!')
+
 
 @router.post("/api/v1/account",
              status_code=status.HTTP_201_CREATED,
@@ -79,6 +78,7 @@ async def post_account(account: Account,
         raise HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
             detail='Registro não incluído!')
+
 
 @router.get("/api/v1/login")
 async def login(username: str, password: str,
