@@ -2,7 +2,7 @@ from decouple import config
 from pydantic import BaseSettings
 
 
-class Settings(BaseSettings):
+class Configuration(BaseSettings):
     '''
     Configuration - APP
     '''
@@ -21,4 +21,4 @@ class Settings(BaseSettings):
     RELOAD: bool = config('RELOAD', cast=bool)
     DEBUG: bool = config('DEBUG', cast=bool)
 
-settings = Settings()
+configuration = Configuration()
