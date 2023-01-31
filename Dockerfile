@@ -1,4 +1,5 @@
-FROM python:3.9.4-slim
+#FROM python:3.9.4-slim
+FROM python:3.10
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -9,16 +10,29 @@ RUN apt-get update \
     && apt-get install -y libaio1 \
     && apt-get install -y locales locales-all
 
+#S.O
 ENV LC_ALL pt_BR.UTF8
 ENV LANG pt_BR.UTF8
 ENV LANGUAGE pt_BR.UTF8
+
+#DATABASE
 ENV HOST 192.168.0.106
 ENV DB pgmape
 ENV ROLE postgres
 ENV PASSWORD postgres
-ENV SECRET_KEY 'z$_gn6&^&u1yv7!a+4rt3749#suj+-gzewikjy$=wqxewp)7bo'
+
+#SECURITY
 ENV JWT_ALGORITHM 'HS512'
 ENV ACCESS_TOKEN_EXPIRE_HOURS 24
+ENV SECRET_KEY 'z$_gn6&^&u1yv7!a+4rt3749#suj+-gzewikjy$=wqxewp)7bo'
+
+#APP
+ENV APP_NAME "Igreja - Dízimo"
+ENV ADMIN_EMAIL "lgerardlucas@gmail.com"
+ENV VERSION 'v.0.2'
+ENV DESCRIPTION "Sistema de Dízimo - Paróquia"
+ENV DEBUG False
+ENV RELOAD False
 
 WORKDIR /app
 

@@ -4,7 +4,7 @@ Module - Security
 import os
 from datetime import datetime, timedelta
 from typing import Any, Union, Optional
-from decouple import config
+from . import config
 
 from passlib.context import CryptContext
 from jose import jwt
@@ -18,9 +18,9 @@ from .account.models import Account
 
 pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
-SECRET_KEY = os.getenv('SECRET_KEY', cast=str)
-JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
-ACCESS_TOKEN_EXPIRE_HOURS = os.getenv('ACCESS_TOKEN_EXPIRE_HOURS')
+SECRET_KEY = config.settings.SECRET_KEY
+JWT_ALGORITHM = config.settings.JWT_ALGORITHM
+ACCESS_TOKEN_EXPIRE_HOURS = config.settings.ACCESS_TOKEN_EXPIRE_HOURS
 
 def conect_db():
     '''
